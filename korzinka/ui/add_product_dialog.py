@@ -1,0 +1,55 @@
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QLineEdit, QLabel, QPushButton, QHBoxLayout, QMessageBox, QDateEdit, QSpinBox
+from PyQt5.QtCore import QDate
+
+class AddProductDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle('Добавить товар')
+        self.setFixedSize(350, 350)
+        layout = QVBoxLayout()
+        self.name = QLineEdit()
+        self.name.setPlaceholderText('Название товара*')
+        self.barcode = QLineEdit()
+        self.barcode.setPlaceholderText('Штрихкод')
+        self.production_date = QDateEdit(QDate.currentDate())
+        self.production_date.setDisplayFormat('yyyy-MM-dd')
+        self.production_date.setCalendarPopup(True)
+        self.expiry_date = QDateEdit(QDate.currentDate())
+        self.expiry_date.setDisplayFormat('yyyy-MM-dd')
+        self.expiry_date.setCalendarPopup(True)
+        self.quantity = QSpinBox()
+        self.quantity.setMinimum(1)
+        self.quantity.setMaximum(100000)
+        self.remind_date = QDateEdit(QDate.currentDate())
+        self.remind_date.setDisplayFormat('yyyy-MM-dd')
+        self.remind_date.setCalendarPopup(True)
+        self.btn_add = QPushButton('Добавить')
+        self.btn_add.clicked.connect(self.try_add)
+        layout.addWidget(QLabel('Название*'))
+        layout.addWidget(self.name)
+        layout.addWidget(QLabel('Штрихкод'))
+        layout.addWidget(self.barcode)
+        layout.addWidget(QLabel('Дата производства*'))
+        layout.addWidget(self.production_date)
+        layout.addWidget(QLabel('Годен до*'))
+        layout.addWidget(self.expiry_date)
+        layout.addWidget(QLabel('Количество*'))
+        layout.addWidget(self.quantity)
+        layout.addWidget(QLabel('Дата напоминания*'))
+        layout.addWidget(self.remind_date)
+        layout.addWidget(self.btn_add)
+        self.setLayout(layout)
+        self.result = None
+
+    def try_add(self):
+        name = self.name.text().strip()
+        barcode = self.barcode.text().strip()
+        production_date = self.production_date.date().toString('yyyy-MM-dd')
+        expiry_date = self.expiry_date.date().toString('yyyy-MM-dd')
+        quantity = self.quantity.value()
+        remind_date = self.remind_date.date().toString('yyyy-MM-dd')
+        if not name or not production_date or not expiry_date or not quantity or not remind_date:
+            QMessageBox.warning(self, 'Ошибка', 'Пожалуйста, заполните все обязательные поля')
+            return
+        self.result = (name, barcode, production_date, expiry_date, quantity, remind_date)
+        self.accept() 
